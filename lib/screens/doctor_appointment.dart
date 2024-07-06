@@ -148,6 +148,7 @@ class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
         label: Row(
           children: [
             Icon(Icons.add),
+            SizedBox(width: 8),
             Text(
               "Add",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

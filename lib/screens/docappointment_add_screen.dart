@@ -67,6 +67,8 @@ class _AppointmentAddState extends State<AppointmentAdd> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 227, 226, 226),
@@ -77,6 +79,7 @@ class _AppointmentAddState extends State<AppointmentAdd> {
       ),
       body: SingleChildScrollView(
         child: Container(
+          height: screenHeight,
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
