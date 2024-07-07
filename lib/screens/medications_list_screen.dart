@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:medicine_try1/model/medicine_model.dart';
 import 'package:medicine_try1/screens/med_add_screen.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 
 const addMed_db = 'medicine-database';
 
@@ -58,7 +59,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       width: 2,
-                      color: Color.fromARGB(255, 27, 248, 27),
+                      color: greencolor,
                     ),
                   ),
                   child: ListTile(
@@ -66,13 +67,13 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                       children: [
                         Icon(
                           Icons.medication_rounded,
-                          color: Color.fromARGB(255, 27, 248, 27),
+                          color: greencolor,
                         ),
                         Text(
                           medicine.medicineName,
                           style: TextStyle(
                               fontSize: 20,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -144,7 +145,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Color.fromARGB(255, 27, 248, 27),
+        backgroundColor: greencolor,
         onPressed: () {
           Navigator.push(
             context,

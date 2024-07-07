@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 
 Widget titlePosition({
   required String title,
@@ -11,8 +12,7 @@ Widget titlePosition({
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30.0),
-          border: Border.all(
-              color: const Color.fromARGB(255, 27, 248, 27), width: 2)),
+          border: Border.all(color: greencolor, width: 2)),
       child: Text(
         title,
         style: TextStyle(
@@ -33,8 +33,7 @@ Widget titlePositionS({
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30.0),
-          border: Border.all(
-              color: const Color.fromARGB(255, 27, 248, 27), width: 2)),
+          border: Border.all(color: greencolor, width: 2)),
       child: Text(
         titleS,
         style: TextStyle(

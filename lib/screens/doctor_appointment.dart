@@ -4,6 +4,7 @@ import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_try1/model/appointment_model.dart';
 import 'package:medicine_try1/screens/docappointment_add_screen.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 
 class DoctorAppointmentScreen extends StatefulWidget {
   @override
@@ -68,7 +69,7 @@ class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         width: 2,
-                        color: Color.fromARGB(255, 27, 248, 27),
+                        color: greencolor,
                       ),
                     ),
                     child: Padding(
@@ -87,7 +88,7 @@ class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
                         ),
                         leading: Icon(
                           IcoFontIcons.doctor,
-                          color: Color.fromARGB(255, 55, 234, 171),
+                          color: docColor,
                           size: 40,
                         ),
                         trailing: IconButton(
@@ -132,7 +133,7 @@ class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Color.fromARGB(255, 27, 248, 27),
+        backgroundColor: greencolor,
         onPressed: () async {
           final newAppointment = await Navigator.push<Appointment>(
             context,

@@ -4,6 +4,7 @@ import 'package:medicine_try1/screens/doctor_appointment.dart';
 import 'package:medicine_try1/screens/home_screen_widget.dart';
 import 'package:medicine_try1/screens/medications_list_screen.dart';
 import 'package:medicine_try1/screens/more_screen.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _screens[_selectedIndex],
       bottomNavigationBar: SingleChildScrollView(
         child: BottomNavigationBar(
-          selectedItemColor: const Color.fromARGB(255, 45, 225, 66),
+          selectedItemColor: greencolor,
           unselectedItemColor: const Color.fromARGB(255, 106, 106, 106),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 import 'package:medicine_try1/utils/colors_util.dart';
 import 'package:medicine_try1/utils/date_utils.dart' as date_util;
 import 'package:medicine_try1/model/medicine_model.dart';
@@ -159,9 +160,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       Colors.white.withOpacity(0.5)
                     ]
                   : [
-                      HexColor("#2dfa01"),
-                      HexColor("#2dfa01"),
-                      HexColor("#2dfa01")
+                      greencolor,
+                      greencolor,
+                      greencolor,
                     ],
               begin: const FractionalOffset(0.0, 0.0),
               end: const FractionalOffset(0.0, 1.0),
@@ -257,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           width: 2,
-          color: Color.fromARGB(255, 27, 248, 27),
+          color: greencolor,
         ),
       ),
       child: Padding(
@@ -269,15 +270,16 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Icon(
                   Icons.timer,
-                  color: const Color.fromARGB(255, 61, 243, 67),
+                  color: greencolor,
                   size: 40,
                 ),
                 Text(
                   '${medicine.notifications} / ${medicine.whenm}',
                   style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 61, 243, 67)),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: greencolor,
+                  ),
                 ),
               ],
             ),
@@ -300,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       '${medicine.medicineName}',
                       style: TextStyle(
                           fontSize: 20,
-                          color: const Color.fromARGB(255, 61, 243, 67),
+                          color: greencolor,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(

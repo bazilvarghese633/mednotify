@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:medicine_try1/model/medicine_model.dart';
 import 'package:medicine_try1/screens/hive_db_functions/medicine_db.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 import 'package:medicine_try1/widgets/title_position.dart';
 import 'package:intl/intl.dart';
 
@@ -224,14 +225,14 @@ class _AddMedicineState extends State<AddMedicine> {
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -261,14 +262,14 @@ class _AddMedicineState extends State<AddMedicine> {
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -285,8 +286,7 @@ class _AddMedicineState extends State<AddMedicine> {
                             child: Text(unit),
                           );
                         }).toList(),
-                        iconEnabledColor:
-                            const Color.fromARGB(255, 35, 225, 42),
+                        iconEnabledColor: greencolor,
                         iconSize: 30,
                       ),
                     ),
@@ -312,15 +312,14 @@ class _AddMedicineState extends State<AddMedicine> {
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color:
-                                  Color.fromARGB(255, 27, 248, 27), // Red color
+                              color: greencolor, // Red color
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -340,8 +339,7 @@ class _AddMedicineState extends State<AddMedicine> {
                             child: Text(freq),
                           );
                         }).toList(),
-                        iconEnabledColor:
-                            const Color.fromARGB(255, 35, 225, 42),
+                        iconEnabledColor: greencolor,
                         iconSize: 30,
                       ),
                     ),
@@ -364,14 +362,14 @@ class _AddMedicineState extends State<AddMedicine> {
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 2,
-                            color: Color.fromARGB(255, 27, 248, 27),
+                            color: greencolor,
                           ),
                           borderRadius: BorderRadius.circular(18),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 2,
-                            color: Color.fromARGB(255, 27, 248, 27),
+                            color: greencolor,
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -414,14 +412,14 @@ class _AddMedicineState extends State<AddMedicine> {
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 width: 2,
-                                color: Color.fromARGB(255, 27, 248, 27),
+                                color: greencolor,
                               ),
                               borderRadius: BorderRadius.circular(18),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 width: 2,
-                                color: Color.fromARGB(255, 27, 248, 27),
+                                color: greencolor,
                               ),
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -451,7 +449,7 @@ class _AddMedicineState extends State<AddMedicine> {
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           width: 2,
-                          color: Color.fromARGB(255, 27, 248, 27),
+                          color: greencolor,
                         ),
                       ),
                       child: Padding(
@@ -534,8 +532,7 @@ class _AddMedicineState extends State<AddMedicine> {
                                                         );
                                                       }).toList(),
                                                       iconEnabledColor:
-                                                          const Color.fromARGB(
-                                                              255, 35, 225, 42),
+                                                          greencolor,
                                                       iconSize: 30,
                                                     ),
                                                   ),
@@ -566,8 +563,7 @@ class _AddMedicineState extends State<AddMedicine> {
                                                         );
                                                       }).toList(),
                                                       iconEnabledColor:
-                                                          const Color.fromARGB(
-                                                              255, 35, 225, 42),
+                                                          greencolor,
                                                       iconSize: 30,
                                                     ),
                                                   ),
@@ -593,8 +589,7 @@ class _AddMedicineState extends State<AddMedicine> {
                             ElevatedButton(
                               onPressed: _addMedication,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Color.fromARGB(255, 63, 222, 68),
+                                backgroundColor: greencolor,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 12),
                                 shape: RoundedRectangleBorder(
@@ -644,7 +639,7 @@ class _AddMedicineState extends State<AddMedicine> {
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           width: 2,
-                          color: Color.fromARGB(255, 27, 248, 27),
+                          color: greencolor,
                         ),
                       ),
                       child: Padding(
@@ -737,8 +732,7 @@ class _AddMedicineState extends State<AddMedicine> {
                             ElevatedButton(
                               onPressed: _addNotifications,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Color.fromARGB(255, 63, 222, 68),
+                                backgroundColor: greencolor,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 12),
                                 shape: RoundedRectangleBorder(
@@ -794,14 +788,14 @@ class _AddMedicineState extends State<AddMedicine> {
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -836,14 +830,14 @@ class _AddMedicineState extends State<AddMedicine> {
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 2,
-                              color: Color.fromARGB(255, 27, 248, 27),
+                              color: greencolor,
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -872,7 +866,7 @@ class _AddMedicineState extends State<AddMedicine> {
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           width: 2,
-                          color: Color.fromARGB(255, 27, 248, 27),
+                          color: greencolor,
                         ),
                       ),
                       child: Column(
@@ -902,8 +896,7 @@ class _AddMedicineState extends State<AddMedicine> {
                                             borderRadius:
                                                 BorderRadius.circular(20),
                                             border: Border.all(
-                                              color: const Color.fromARGB(255,
-                                                  37, 231, 44), // Border color
+                                              color: greencolor, // Border color
                                               width: 3, // Border width
                                             ),
                                           ),
@@ -1050,7 +1043,7 @@ class _AddMedicineState extends State<AddMedicine> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 43, 241, 46),
+                      backgroundColor: greencolor,
                       padding:
                           EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                       shape: RoundedRectangleBorder(

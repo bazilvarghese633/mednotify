@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_try1/model/appointment_model.dart';
+import 'package:medicine_try1/ui_colors/green.dart';
 import 'package:medicine_try1/widgets/title_position.dart';
 
 class AppointmentAdd extends StatefulWidget {
@@ -107,14 +108,14 @@ class _AppointmentAddState extends State<AppointmentAdd> {
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -147,14 +148,14 @@ class _AppointmentAddState extends State<AppointmentAdd> {
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -187,14 +188,14 @@ class _AppointmentAddState extends State<AppointmentAdd> {
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -231,14 +232,14 @@ class _AppointmentAddState extends State<AppointmentAdd> {
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   width: 2,
-                                  color: Color.fromARGB(255, 27, 248, 27),
+                                  color: greencolor,
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -257,7 +258,7 @@ class _AppointmentAddState extends State<AppointmentAdd> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 27, 248, 27),
+                      backgroundColor: greencolor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
