@@ -4,6 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:medicine_try1/model/medicine_model.dart';
 import 'package:medicine_try1/screens/hive_db_functions/medicine_db.dart';
 import 'package:medicine_try1/ui_colors/green.dart';
+import 'package:medicine_try1/widgets/coloum_custom.dart';
+import 'package:medicine_try1/widgets/custom_dropdown.dart';
+import 'package:medicine_try1/widgets/scaffold.dart';
 import 'package:medicine_try1/widgets/title_position.dart';
 import 'package:intl/intl.dart';
 
@@ -98,13 +101,23 @@ class _AddMedicineState extends State<AddMedicine> {
   }
 
   Future<void> _endDate(BuildContext context) async {
+    if (_startedDate == null) {
+      // Show an alert or some feedback that start date must be selected first
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a start date first')),
+      );
+      return;
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _endedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate:
+          _startedDate!, // Ensure the picker starts from the start date
+      firstDate:
+          _startedDate!, // This ensures the end date is after the start date
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
-    if (picked != null && picked != _endDate) {
+    if (picked != null && picked != _endedDate) {
       setState(() {
         _endedDate = picked;
       });
@@ -192,875 +205,265 @@ class _AddMedicineState extends State<AddMedicine> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 227, 226, 226),
-        title: Text(
-          "         Add Medication",
-          style: TextStyle(fontWeight: FontWeight.bold),
+    return CustomScaffoldmedadd(
+      appBarTitle: "          Add Medication",
+      children: [
+        CustomStack(
+          child: MedicineTextFieldForm(controller: _medicationNameController),
+          title: "Medicine Name",
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                      child: TextFormField(
-                        controller: _medicationNameController,
-                        decoration: InputDecoration(
-                          hintText: "",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
-                      ),
-                    ),
-                  ),
-                  titlePosition(title: "Medicine Name"),
-                ],
+        CustomStack(
+          child: CustomDropdown(
+            value: _selectedUnit,
+            items: _units,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedUnit = newValue!;
+              });
+            },
+          ),
+          title: "Medicine Unit",
+        ),
+        CustomStack(
+          child: CustomDropdown(
+            value: _frequency,
+            items: _frequencies,
+            onChanged: (String? newValue) {
+              setState(() {
+                _frequency = newValue!;
+                _showWeekDaySelection = _frequency == 'X Day a Week';
+                _selectedDays = [];
+              });
+            },
+          ),
+          title: "Frequency",
+        ),
+        if (_showWeekDaySelection)
+          CustomStack(
+            child: CustomDropdown(
+              items: _weekDays,
+              onChanged: (String? newValue) {
+                if (newValue != null && !_selectedDays.contains(newValue)) {
+                  setState(() {
+                    _selectedDays.add(newValue);
+                  });
+                }
+              },
+            ),
+            title: "Select a Day",
+          )
+        else if (_frequency == 'X Day a Month')
+          CustomStack(
+            child: CustomDateFormField(
+              selectDate: _selectDate,
+              controller: TextEditingController(
+                text: _selectedDate != null
+                    ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
+                    : '',
               ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedUnit,
-                        decoration: InputDecoration(
-                          hintText: "",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedUnit = newValue!;
-                          });
-                        },
-                        items:
-                            _units.map<DropdownMenuItem<String>>((String unit) {
-                          return DropdownMenuItem<String>(
-                            value: unit,
-                            child: Text(unit),
-                          );
-                        }).toList(),
-                        iconEnabledColor: greencolor,
-                        iconSize: 30,
-                      ),
-                    ),
-                  ),
-                  titlePosition(title: "Medicine Unit"),
-                ],
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                      child: DropdownButtonFormField<String>(
-                        value: _frequency,
-                        decoration: InputDecoration(
-                          hintText: "",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor, // Red color
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _frequency = newValue!;
-                            _showWeekDaySelection =
-                                _frequency == 'X Day a Week';
-                            _selectedDays = [];
-                          });
-                        },
-                        items: _frequencies
-                            .map<DropdownMenuItem<String>>((String freq) {
-                          return DropdownMenuItem<String>(
-                            value: freq,
-                            child: Text(freq),
-                          );
-                        }).toList(),
-                        iconEnabledColor: greencolor,
-                        iconSize: 30,
-                      ),
-                    ),
-                  ),
-                  titlePosition(title: "Frequency"),
-                ],
-              ),
-              if (_showWeekDaySelection)
-                Container(
-                  height: 100,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        hintText: "Select a Day",
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: greencolor,
-                          ),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: greencolor,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      onChanged: (String? newValue) {
-                        if (newValue != null &&
-                            !_selectedDays.contains(newValue)) {
-                          setState(() {
-                            _selectedDays.add(newValue);
-                          });
-                        }
-                      },
-                      items:
-                          _weekDays.map<DropdownMenuItem<String>>((String day) {
-                        return DropdownMenuItem<String>(
-                          value: day,
-                          child: Text(day),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                )
-              else if (_frequency == 'X Day a Month')
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      height: 100,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                        child: TextFormField(
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            labelText: '',
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 2,
-                                color: greencolor,
-                              ),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 2,
-                                color: greencolor,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          controller: TextEditingController(
-                            text: _selectedDate != null
-                                ? DateFormat('dd-MM-yyyy')
-                                    .format(_selectedDate!)
-                                : '',
-                          ),
-                          onTap: () => _selectDate(context),
-                        ),
-                      ),
-                    ),
-                    titlePosition(title: "Select the Date"),
-                  ],
-                ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Container(
-                      height: 380,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          width: 2,
-                          color: greencolor,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 25, left: 20, right: 20, bottom: 20),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 250,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  width: 2,
-                                  color: Color.fromARGB(255, 1, 2, 1),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 14, bottom: 14, right: 1),
-                                child: Scrollbar(
-                                  thumbVisibility: true,
-                                  thickness: 6,
-                                  radius: Radius.circular(8),
-                                  child: CustomScrollView(
-                                    slivers: [
-                                      SliverList(
-                                        delegate: SliverChildBuilderDelegate(
-                                          (BuildContext context, int index) {
-                                            return ListTile(
-                                              title: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "    When",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Dosage",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              subtitle: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 20),
-                                                    child:
-                                                        DropdownButton<String>(
-                                                      value: _medications[index]
-                                                          ['when'],
-                                                      onChanged:
-                                                          (String? newValue) {
-                                                        setState(() {
-                                                          _updateMedicationWhen(
-                                                              index, newValue!);
-                                                        });
-                                                      },
-                                                      items: _dropdownWhen.map<
-                                                              DropdownMenuItem<
-                                                                  String>>(
-                                                          (String value) {
-                                                        return DropdownMenuItem<
-                                                            String>(
-                                                          value: value,
-                                                          child:
-                                                              _buildSelectedItem(
-                                                                  value),
-                                                        );
-                                                      }).toList(),
-                                                      iconEnabledColor:
-                                                          greencolor,
-                                                      iconSize: 30,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 13),
-                                                    child: DropdownButton<int>(
-                                                      menuMaxHeight: 250,
-                                                      value: _medications[index]
-                                                          ['dosage'],
-                                                      onChanged:
-                                                          (int? newValue) {
-                                                        setState(() {
-                                                          _updateMedicationDosage(
-                                                              index, newValue!);
-                                                        });
-                                                      },
-                                                      items: _dosageList.map<
-                                                              DropdownMenuItem<
-                                                                  int>>(
-                                                          (int value) {
-                                                        return DropdownMenuItem<
-                                                            int>(
-                                                          value: value,
-                                                          child: Text(
-                                                              value.toString()),
-                                                        );
-                                                      }).toList(),
-                                                      iconEnabledColor:
-                                                          greencolor,
-                                                      iconSize: 30,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons
-                                                    .remove_circle_outline),
-                                                onPressed: () =>
-                                                    _deleteMedication(index),
-                                              ),
-                                            );
-                                          },
-                                          childCount: _medications.length,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: _addMedication,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: greencolor,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    size: 24,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Add',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  titlePositionS(titleS: "Schedule"),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Container(
-                      height: 380,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          width: 2,
-                          color: greencolor,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 25, left: 20, right: 20, bottom: 20),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 250,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  width: 2,
-                                  color: Color.fromARGB(255, 1, 2, 1),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 14, bottom: 14, right: 1),
-                                child: Scrollbar(
-                                  thumbVisibility: true,
-                                  thickness: 6,
-                                  radius: Radius.circular(8),
-                                  child: CustomScrollView(
-                                    slivers: [
-                                      SliverList(
-                                        delegate: SliverChildBuilderDelegate(
-                                          (BuildContext context, int index) {
-                                            return ListTile(
-                                              title: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "Time",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              subtitle: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        _showTimePicker(index),
-                                                    child: Text(
-                                                      _notifications[index]
-                                                              ?.format(
-                                                                  context) ??
-                                                          'Select Time',
-                                                      style: TextStyle(
-                                                        color: _notifications[
-                                                                    index] !=
-                                                                null
-                                                            ? Color.fromARGB(
-                                                                255,
-                                                                35,
-                                                                239,
-                                                                39)
-                                                            : Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons
-                                                    .remove_circle_outline),
-                                                onPressed: () =>
-                                                    _deleteNotifications(index),
-                                              ),
-                                            );
-                                          },
-                                          childCount: _notifications.length,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: _addNotifications,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: greencolor,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    size: 24,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Add',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  titlePositionS(titleS: "Notification Time"),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                      child: TextFormField(
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: '',
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        controller: TextEditingController(
-                          text: _startedDate != null
-                              ? DateFormat('dd-MM-yyyy').format(_startedDate!)
-                              : '',
-                        ),
-                        onTap: () => _startDate(context),
-                      ),
-                    ),
-                  ),
-                  titlePosition(title: "Start Date"),
-                ],
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                      child: TextFormField(
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: '',
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: greencolor,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        controller: TextEditingController(
-                          text: _endedDate != null
-                              ? DateFormat('dd-MM-yyyy').format(_endedDate!)
-                              : '',
-                        ),
-                        onTap: () => _endDate(context),
-                      ),
-                    ),
-                  ),
-                  titlePosition(title: "End Date"),
-                ],
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Container(
-                      height: 280,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          width: 2,
-                          color: greencolor,
-                        ),
-                      ),
-                      child: Column(
+            ),
+            title: "Select a Date",
+          ),
+        CustomColoumStack(
+          child: CustomScrollView(
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return ListTile(
+                      title: sheduleTitleRow(),
+                      subtitle: Row(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 30, bottom: 30),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 40),
-                                      child: Text("Currently in stock"),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: greencolor, // Border color
-                                              width: 3, // Border width
-                                            ),
-                                          ),
-                                          child: DropdownButton<int>(
-                                            underline: SizedBox(),
-                                            menuMaxHeight: 250,
-                                            value: _selectedStock,
-                                            onChanged: (int? newValue) {
-                                              setState(() {
-                                                _selectedStock = newValue!;
-                                              });
-                                            },
-                                            items: _currentStock
-                                                .map<DropdownMenuItem<int>>(
-                                                    (int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(_selectedUnit),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20),
+                            child: DropdownButton<String>(
+                              value: _medications[index]['when'],
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _updateMedicationWhen(index, newValue!);
+                                });
+                              },
+                              items: _dropdownWhen
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: _buildSelectedItem(value),
+                                );
+                              }).toList(),
+                              iconEnabledColor: greencolor,
+                              iconSize: 30,
+                            ),
                           ),
-                          Divider(
-                            thickness: 1,
-                            color: Colors.black,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 20, bottom: 20),
-                                child: Column(
-                                  children: [
-                                    Text("Remind me when stock decreses to "),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: Color.fromARGB(
-                                                  255, 248, 23, 23),
-                                              width: 3, // Border width
-                                            ),
-                                          ),
-                                          child: DropdownButton<int>(
-                                            underline: SizedBox(),
-                                            menuMaxHeight: 250,
-                                            value: _selectedDe,
-                                            onChanged: (int? newValue) {
-                                              setState(() {
-                                                _selectedDe = newValue!;
-                                              });
-                                            },
-                                            items: _deStock
-                                                .map<DropdownMenuItem<int>>(
-                                                    (int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(_selectedUnit),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(left: 13),
+                            child: DropdownButton<int>(
+                              menuMaxHeight: 250,
+                              value: _medications[index]['dosage'],
+                              onChanged: (int? newValue) {
+                                setState(() {
+                                  _updateMedicationDosage(index, newValue!);
+                                });
+                              },
+                              items: _dosageList
+                                  .map<DropdownMenuItem<int>>((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Text(value.toString()),
+                                );
+                              }).toList(),
+                              iconEnabledColor: greencolor,
+                              iconSize: 30,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  titlePositionS(titleS: "Medicine Stock")
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 30, bottom: 20),
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      List<Future<void>> saveFutures = [];
-
-                      for (int i = 0; i < _medications.length; i++) {
-                        if (_medications[i]['when'] != null &&
-                            _medications[i]['dosage'] != null) {
-                          var values = Medicine(
-                            id: DateTime.now()
-                                .microsecondsSinceEpoch
-                                .toString(),
-                            medicineName: _medicationNameController.text,
-                            medicineUnit: _selectedUnit,
-                            frequency: _frequency,
-                            selectedDay: _selectedDays.toString(),
-                            selectedDate: _selectedDate != null
-                                ? dateFormat.format(_selectedDate!)
-                                : '',
-                            whenm: _medications[i]['when'].toString(),
-                            dosage: _medications[i]['dosage'].toString(),
-                            notifications: _notifications
-                                .map((time) => _formatTime(time!))
-                                .join(', '),
-                            startdate: _startedDate != null
-                                ? dateFormat.format(_startedDate!)
-                                : '',
-                            enddate: _endedDate != null
-                                ? dateFormat.format(_endedDate!)
-                                : '',
-                            currentstock: _selectedStock.toString(),
-                            destock: _selectedDe.toString(),
-                          );
-
-                          saveFutures.add(med.addMedicienDetails(values));
-                        }
-                      }
-
-                      await Future.wait(saveFutures);
-
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: greencolor,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      trailing: IconButton(
+                        icon: Icon(Icons.remove_circle_outline),
+                        onPressed: () => _deleteMedication(index),
                       ),
-                    ),
-                    child: Text(
-                      'SAVE',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
+                    );
+                  },
+                  childCount: _medications.length,
                 ),
-              )
+              ),
             ],
           ),
+          titleS: "Schedule",
+          onPressed: _addMedication,
         ),
-      ),
+        SizedBox(
+          height: 20,
+        ),
+        CustomColoumStack(
+          child: CustomScrollView(
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return ListTile(
+                      title: notificationTitleRow(),
+                      subtitle: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () => _showTimePicker(index),
+                            child: Text(
+                              _notifications[index]?.format(context) ??
+                                  'Select Time',
+                              style: TextStyle(
+                                color: _notifications[index] != null
+                                    ? Color.fromARGB(255, 35, 239, 39)
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.remove_circle_outline),
+                        onPressed: () => _deleteNotifications(index),
+                      ),
+                    );
+                  },
+                  childCount: _notifications.length,
+                ),
+              ),
+            ],
+          ),
+          titleS: "Notification Time",
+          onPressed: _addNotifications,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        CustomStack(
+          child: CustomDateFormField(
+            selectDate: _startDate,
+            controller: TextEditingController(
+              text: _startedDate != null
+                  ? DateFormat('dd-MM-yyyy').format(_startedDate!)
+                  : '',
+            ),
+          ),
+          title: "Start Date",
+        ),
+        CustomStack(
+          child: CustomDateFormField(
+            selectDate: _endDate,
+            controller: TextEditingController(
+              text: _endedDate != null
+                  ? DateFormat('dd-MM-yyyy').format(_endedDate!)
+                  : '',
+            ),
+          ),
+          title: "End Date",
+        ),
+        CustomStockColum(
+          row1: CurrentStockDropdown(
+            items: _currentStock,
+            onChanged: (int? newValue) {
+              setState(() {
+                _selectedStock = newValue!;
+              });
+            },
+            selectedUnit: _selectedUnit,
+            borderColor: greencolor,
+            value: _selectedStock,
+          ),
+          row2: CurrentStockDropdown(
+            items: _deStock,
+            onChanged: (int? newValue) {
+              setState(() {
+                _selectedDe = newValue!;
+              });
+            },
+            selectedUnit: _selectedUnit,
+            borderColor: Color.fromARGB(255, 248, 23, 23),
+            value: _selectedDe,
+          ),
+          titleS: "Medicine Stock",
+        ),
+        MedicationSaveButton(
+          onPressed: () async {
+            List<Future<void>> saveFutures = [];
+
+            for (int i = 0; i < _medications.length; i++) {
+              if (_medications[i]['when'] != null &&
+                  _medications[i]['dosage'] != null) {
+                var values = Medicine(
+                  id: DateTime.now().microsecondsSinceEpoch.toString(),
+                  medicineName: _medicationNameController.text,
+                  medicineUnit: _selectedUnit,
+                  frequency: _frequency,
+                  selectedDay: _selectedDays.toString(),
+                  selectedDate: _selectedDate != null
+                      ? dateFormat.format(_selectedDate!)
+                      : '',
+                  whenm: _medications[i]['when'].toString(),
+                  dosage: _medications[i]['dosage'].toString(),
+                  notifications: _notifications
+                      .map((time) => _formatTime(time!))
+                      .join(', '),
+                  startdate: _startedDate != null
+                      ? dateFormat.format(_startedDate!)
+                      : '',
+                  enddate:
+                      _endedDate != null ? dateFormat.format(_endedDate!) : '',
+                  currentstock: _selectedStock.toString(),
+                  destock: _selectedDe.toString(),
+                );
+
+                saveFutures.add(med.addMedicienDetails(values));
+              }
+            }
+
+            await Future.wait(saveFutures);
+
+            Navigator.pop(context);
+          },
+        )
+      ],
     );
   }
 }

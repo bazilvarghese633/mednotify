@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medicine_try1/local_notifications.dart';
+import 'package:medicine_try1/screens/history_screeen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -8,24 +8,29 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 227, 226, 226),
-        title: Center(
+        backgroundColor: const Color.fromARGB(255, 227, 226, 226),
+        title: const Center(
           child: Text(
-            "Settings           ",
+            "Settings         ",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ),
-      body: Center(
-        child: ElevatedButton.icon(
-            onPressed: () {
-              LocalNotifications.showSimpleNotification(
-                  title: "hello there",
-                  body: "you have done it",
-                  payload: "you are brilliant");
+      body: ListView(
+        children: [
+          ListTile(
+            title: const Text("History"),
+            trailing: const Icon(Icons.arrow_forward),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HistoryScreen(),
+                ),
+              );
             },
-            icon: Icon(Icons.notification_add),
-            label: Text("simple notification")),
+          ),
+        ],
       ),
     );
   }

@@ -56,15 +56,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void scrollToCurrentDay() {
-    final currentDayIndex =
-        currentMonthList.indexWhere((date) => date.day == currentDateTime.day);
-    if (currentDayIndex != -1) {
+    final bool isCurrentMonth = currentDateTime.month == DateTime.now().month &&
+        currentDateTime.year == DateTime.now().year;
+
+    final int dayIndex = isCurrentMonth
+        ? currentMonthList.indexWhere((date) => date.day == currentDateTime.day)
+        : 0; // Use the first day index if not the current month
+
+    if (dayIndex != -1 && currentMonthList.isNotEmpty) {
       final double itemWidth = 70.0; // Width of each item in the list
       final double screenWidth = MediaQuery.of(context).size.width;
       final double centerOffset =
-          (screenWidth - itemWidth) / 2.0; // Offset to center the current day
+          (screenWidth - itemWidth) / 2.0; // Offset to center the day
       final double scrollOffset =
-          currentDayIndex * itemWidth - centerOffset; // Scroll to center
+          dayIndex * itemWidth - centerOffset; // Scroll to center
       scrollController.animateTo(
         scrollOffset,
         duration: Duration(milliseconds: 500),
@@ -83,14 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               setState(() {
-                currentDateTime =
-                    DateTime(currentDateTime.year, currentDateTime.month - 1);
+                currentDateTime = DateTime(
+                    currentDateTime.year, currentDateTime.month - 1, 1);
                 currentMonthList =
                     date_util.DateUtils.daysInMonth(currentDateTime);
                 currentMonthList.sort((a, b) => a.day.compareTo(b.day));
                 currentMonthList = currentMonthList.toSet().toList();
                 filterMedicines(currentDateTime);
               });
+              scrollToCurrentDay(); // Scroll to the appropriate day
             },
           ),
           Text(
@@ -106,14 +112,15 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.arrow_forward),
             onPressed: () {
               setState(() {
-                currentDateTime =
-                    DateTime(currentDateTime.year, currentDateTime.month + 1);
+                currentDateTime = DateTime(
+                    currentDateTime.year, currentDateTime.month + 1, 1);
                 currentMonthList =
                     date_util.DateUtils.daysInMonth(currentDateTime);
                 currentMonthList.sort((a, b) => a.day.compareTo(b.day));
                 currentMonthList = currentMonthList.toSet().toList();
                 filterMedicines(currentDateTime);
               });
+              scrollToCurrentDay(); // Scroll to the appropriate day
             },
           ),
         ],
@@ -323,7 +330,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget bottomView() {
     return Container(
       width: width,
-      height: height * 0.72,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

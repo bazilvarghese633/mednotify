@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+// ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:medicine_try1/model/appointment_model.dart';
-import 'package:medicine_try1/ui_colors/green.dart';
+import 'package:medicine_try1/model/dochistory.dart';
+import 'package:medicine_try1/widgets/docaddwidgets/button.dart';
+import 'package:medicine_try1/widgets/docaddwidgets/doc_add.dart';
 import 'package:medicine_try1/widgets/title_position.dart';
 
 class AppointmentAdd extends StatefulWidget {
@@ -27,16 +31,48 @@ class _AppointmentAddState extends State<AppointmentAdd> {
     _selectedTime = TimeOfDay.now();
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     if (_formKey.currentState!.validate()) {
-      final newAppointment = Appointment(
-        doctorName: _doctorNameController.text,
-        hospitalName: _hospitalNameController.text,
-        appointmentDate: _selectedDate,
-        appointmentTime: '${_selectedTime.hour}:${_selectedTime.minute}',
-      );
-      widget.onSave(newAppointment);
-      Navigator.of(context).pop(newAppointment);
+      try {
+        print('Save button pressed'); // Debug print
+
+        // Create new appointment entry
+        final newAppointment = Appointment(
+          doctorName: _doctorNameController.text,
+          hospitalName: _hospitalNameController.text,
+          appointmentDate: _selectedDate,
+          appointmentTime: '${_selectedTime.hour}:${_selectedTime.minute}',
+        );
+
+        // Generate a unique ID for DoctorHistory
+        final id =
+            DateTime.now().millisecondsSinceEpoch.toString(); // Unique ID
+
+        // Create new doctor history entry with the ID
+        final doctorHistoryEntry = DoctorHistory(
+          id: id, // Include the unique ID
+          doctorName: _doctorNameController.text,
+          appointmentDate: _selectedDate,
+          hospitalName: _hospitalNameController.text,
+        );
+
+        // Get Hive boxes
+        final appointmentBox = Hive.box<Appointment>('appointmentBox');
+        final historyBox = Hive.box<DoctorHistory>('dochistory');
+
+        // Save appointment and history entries
+        await appointmentBox.add(newAppointment);
+        await historyBox.add(doctorHistoryEntry);
+
+        widget.onSave(newAppointment);
+
+        Navigator.of(context).pop(newAppointment);
+      } catch (e) {
+        print("Error saving appointment and history: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error saving data: $e")),
+        );
+      }
     }
   }
 
@@ -44,7 +80,7 @@ class _AppointmentAddState extends State<AppointmentAdd> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime(2020),
+      firstDate: DateTime.now(), // Restrict past dates
       lastDate: DateTime(2101),
     );
     if (pickedDate != null && pickedDate != _selectedDate) {
@@ -70,218 +106,40 @@ class _AppointmentAddState extends State<AppointmentAdd> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 227, 226, 226),
-        title: const Text(
-          "       Add Appointment",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: screenHeight,
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        height: 100,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                          child: TextFormField(
-                            controller: _doctorNameController,
-                            decoration: InputDecoration(
-                              hintText: "",
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 16.0),
-                          ),
-                        ),
-                      ),
-                      titlePosition(title: "Doctor Name")
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        height: 100,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                          child: TextFormField(
-                            controller: _hospitalNameController,
-                            decoration: InputDecoration(
-                              hintText: "",
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 16.0),
-                          ),
-                        ),
-                      ),
-                      titlePosition(title: "Hospital Name")
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        height: 100,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                          child: TextFormField(
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: '',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 16.0),
-                            onTap: _presentDatePicker,
-                            controller: TextEditingController(
-                                text: DateFormat('dd-MM-yyyy')
-                                    .format(_selectedDate)),
-                          ),
-                        ),
-                      ),
-                      titlePosition(title: "Select Date ")
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        height: 100,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 0.0),
-                          child: TextFormField(
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: '',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  width: 2,
-                                  color: greencolor,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 16.0),
-                            onTap: _presentTimePicker,
-                            controller: TextEditingController(
-                                text: _selectedTime.format(context)),
-                          ),
-                        ),
-                      ),
-                      titlePosition(title: "Select Time")
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: greencolor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: _saveForm,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text(
-                        'Add Appointment',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    return CustomScaffolddocadd(
+        appBarTitle: "       Add Appointment",
+        children: [
+          CustomStack(
+            child: MedicineTextFieldForm(
+              controller: _doctorNameController,
             ),
+            title: "Doctor Name",
           ),
-        ),
-      ),
-    );
+          const SizedBox(height: 12),
+          CustomStack(
+            child: MedicineTextFieldForm(
+              controller: _hospitalNameController,
+            ),
+            title: "Hospital Name",
+          ),
+          const SizedBox(height: 12),
+          CustomStack(
+            child: CustomDateFormFielddoc(
+              onTap: _presentDatePicker,
+              selectDate: _selectedDate,
+            ),
+            title: "Select Date ",
+          ),
+          const SizedBox(height: 12),
+          CustomStack(
+            child: CustomDateFormFielddocTime(
+                onTap: _presentTimePicker, selectTime: _selectedTime),
+            title: "Select Time",
+          ),
+          const SizedBox(height: 12),
+          CustomSaveButtonDocAdd(saveForm: _saveForm),
+        ],
+        formKey: _formKey,
+        height: screenHeight);
   }
 }

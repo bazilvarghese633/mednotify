@@ -58,10 +58,27 @@ class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
           if (box.values.isEmpty) {
             return Center(child: Text("No Appointments"));
           } else {
+            // Sort the appointments by date and time
+            final appointments = box.values.toList()
+              ..sort((a, b) {
+                int dateComparison =
+                    a.appointmentDate.compareTo(b.appointmentDate);
+                if (dateComparison != 0) {
+                  return dateComparison;
+                } else {
+                  // Compare TimeOfDay by converting to total minutes
+                  int aTotalMinutes = a.appointmentTimeOfDay.hour * 60 +
+                      a.appointmentTimeOfDay.minute;
+                  int bTotalMinutes = b.appointmentTimeOfDay.hour * 60 +
+                      b.appointmentTimeOfDay.minute;
+                  return aTotalMinutes.compareTo(bTotalMinutes);
+                }
+              });
+
             return ListView.builder(
-              itemCount: box.values.length,
+              itemCount: appointments.length,
               itemBuilder: (context, index) {
-                final appointment = box.getAt(index)!;
+                final appointment = appointments[index];
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
@@ -92,8 +109,7 @@ class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
                           size: 40,
                         ),
                         trailing: IconButton(
-                          icon: Icon(Icons.delete,
-                              color: Colors.red), // Red delete icon
+                          icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
                             showDialog(
                               context: context,
